@@ -41,6 +41,22 @@ check: ## Compile everything, checking syntax (does not output binaries)
 run-dev-api: .env ## Runs api for local dev
 	export API_LOCAL=true && go run cmd/api/main.go
 
+.PHONY: build-api-image
+build-api-image:
+	docker build -t api -f cmd/api/Dockerfile .
+
+.PHONY: run-api-image
+run-api-image:
+	docker run -p 9090:9090 api /api
+
 .PHONY: run-dev-admin-manager
 run-dev-admin-manager: .env ## Runs api for local dev
 	export ADMIN_MANAGER_LOCAL=true && go run cmd/adminmanager/main.go
+
+.PHONY: build-admin-manager-image
+build-admin-manager-image:
+	docker build -t admin-manager -f cmd/adminmanager/Dockerfile .
+
+.PHONY: run-admin-manager-image
+run-admin-manager-image:
+	docker run -p 9091:9091 admin-manager /adminmanager
