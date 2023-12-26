@@ -51,7 +51,15 @@ mock_clean:
 
 .PHONY: run-dev-api
 run-dev-api: .env ## Runs api for local dev
-	export API_LOCAL=true && go run cmd/api/main.go
+	export API_LOCAL=true && go run cmd/api/main.go run-api-server
+
+.PHONY: migrate-up-api
+migrate-up-api: .env
+	export API_LOCAL=true && go run cmd/api/main.go migrate-up
+
+.PHONY: migrate-down-api
+migrate-down-api: .env
+	export API_LOCAL=true && go run cmd/api/main.go migrate-down
 
 .PHONY: build-api-image
 build-api-image:
@@ -59,10 +67,10 @@ build-api-image:
 
 .PHONY: run-api-image
 run-api-image:
-	docker run -p 9090:9090 api /api
+	docker run -p 9090:9090 api /api  run-api-server
 
 .PHONY: run-dev-admin-manager
-run-dev-admin-manager: .env ## Runs api for local dev
+run-dev-admin-manager: .env ## Runs admin-manager for local dev
 	export ADMIN_MANAGER_LOCAL=true && go run cmd/adminmanager/main.go
 
 .PHONY: build-admin-manager-image

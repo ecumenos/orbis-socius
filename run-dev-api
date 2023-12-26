@@ -1,0 +1,33 @@
+go mod tidy
+go build ./...
+go fmt ./...
+go vet -asmdecl -assign -atomic -bools -buildtag -cgocall -copylocks -httpresponse -loopclosure -lostcancel -nilfunc -printf -shift -stdmethods -structtag -tests -unmarshal -unreachable -unsafeptr -unusedresult ./...
+test -z 
+go test ./...
+?   	github.com/ecumenos/orbis-socius/cmd/adminmanager	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/adminmanager/httpserver	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/adminmanager/httpserver/mocks	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/adminmanager/configuration	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/api	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/api/accounts	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/api/httpserver	[no test files]
+?   	github.com/ecumenos/orbis-socius/internal/accounts	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/api/httpserver/mocks	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/api/repo	[no test files]
+?   	github.com/ecumenos/orbis-socius/cmd/api/configuration	[no test files]
+?   	github.com/ecumenos/orbis-socius/internal/postgres	[no test files]
+?   	github.com/ecumenos/orbis-socius/models	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/ecumenosfx	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/contextutils	[no test files]
+?   	github.com/ecumenos/orbis-socius/schemas/common	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/httputils	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/netutils	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/primitives	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/random	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/sliceutils	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/timeutils	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/zerodowntime	[no test files]
+?   	github.com/ecumenos/orbis-socius/pkg/toolkit/errorsutils	[no test files]
+ok  	github.com/ecumenos/orbis-socius/pkg/logger	(cached) [no tests to run]
+find . -name "*.go" -path "**/mocks/*" | while read file; do rm $file; done;
+go generate ./...

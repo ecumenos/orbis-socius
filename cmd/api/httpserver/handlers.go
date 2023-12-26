@@ -3,6 +3,7 @@ package httpserver
 import (
 	"net/http"
 
+	"github.com/ecumenos/orbis-socius/cmd/api/accounts"
 	"github.com/ecumenos/orbis-socius/pkg/ecumenosfx"
 	"github.com/ecumenos/orbis-socius/pkg/toolkit/httputils"
 	"go.uber.org/fx"
@@ -17,21 +18,24 @@ type Handlers interface {
 }
 
 type HandlersImpl struct {
-	Logger *zap.Logger
-	Name   ecumenosfx.ServiceName
+	Logger   *zap.Logger
+	Name     ecumenosfx.ServiceName
+	Accounts *accounts.Service
 }
 
 type handlersParams struct {
 	fx.In
 
-	Logger *zap.Logger
-	Name   ecumenosfx.ServiceName
+	Logger   *zap.Logger
+	Name     ecumenosfx.ServiceName
+	Accounts *accounts.Service
 }
 
 func NewHandlers(params handlersParams) Handlers {
 	return &HandlersImpl{
-		Logger: params.Logger,
-		Name:   params.Name,
+		Logger:   params.Logger,
+		Name:     params.Name,
+		Accounts: params.Accounts,
 	}
 }
 

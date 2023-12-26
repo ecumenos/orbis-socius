@@ -7,5 +7,9 @@
     "readTimeout": 15000000000,
     "writeTimeout": 15000000000,
     "idleTimeout": 15000000000
+  },
+  "apiDataStore": {
+    "url": "postgresql://ecumenosuser:rootpassword@localhost:5432/ecumenos_orbis_socius_apidb",
+    "migrationsPath": "file://cmd/api/repo/migrations"
   }
 }
