@@ -12,6 +12,7 @@ import (
 	"github.com/ecumenos/orbis-socius/cmd/api/httpserver"
 	"github.com/ecumenos/orbis-socius/pkg/ecumenosfx"
 	"github.com/ecumenos/orbis-socius/pkg/logger"
+	"github.com/ecumenos/orbis-socius/pkg/zerodowntime"
 	cli "github.com/urfave/cli/v2"
 	"golang.org/x/exp/slog"
 )
@@ -38,7 +39,7 @@ func run(args []string) error {
 	}
 
 	app.Action = func(cctx *cli.Context) error {
-		fx.New(
+		app := fx.New(
 			fx.Supply(ecumenosfx.ServiceName("api")),
 			fx.Provide(
 				func(lc fx.Lifecycle, sn ecumenosfx.ServiceName) (*zap.Logger, error) {
@@ -51,9 +52,9 @@ func run(args []string) error {
 			}),
 			configuration.Module,
 			httpserver.Module,
-		).Run()
+		)
 
-		return nil
+		return zerodowntime.HandleApp(app)
 	}
 
 	return app.Run(args)

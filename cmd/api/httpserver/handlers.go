@@ -9,6 +9,8 @@ import (
 	"go.uber.org/zap"
 )
 
+//go:generate mockery --name=Handlers
+
 type Handlers interface {
 	Ping(rw http.ResponseWriter, r *http.Request)
 	Info(rw http.ResponseWriter, r *http.Request)

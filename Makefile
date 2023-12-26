@@ -2,11 +2,15 @@ GOPRIVATE=github.com/ecumenos
 SHELL=/bin/sh
 
 .PHONY: all
-all: check fmt lint test
+all: tidy check fmt lint test mock tidy
 
 .PHONY: test
 test: ## Run tests
 	go test ./...
+
+.PHONY: tidy
+tidy:
+	go mod tidy
 
 .PHONY: test-short
 test-short: ## Run tests, skipping slower integration tests
@@ -33,6 +37,14 @@ fmt: ## Run syntax re-formatting (modify in place)
 .PHONY: check
 check: ## Compile everything, checking syntax (does not output binaries)
 	go build ./...
+
+.PHONY: mock
+mock: mock_clean
+	go generate ./...
+
+.PHONY: mock_clean
+mock_clean:
+	find . -name "*.go" -path "**/mocks/*" | while read file; do rm $$file; done;
 
 .env:
 	if [ ! -f ".env" ]; then cp example.dev.env .env; fi
