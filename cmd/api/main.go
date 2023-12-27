@@ -10,8 +10,8 @@ import (
 	"github.com/carlmjohnson/versioninfo"
 	"github.com/ecumenos/orbis-socius/cmd/api/accounts"
 	"github.com/ecumenos/orbis-socius/cmd/api/configuration"
+	"github.com/ecumenos/orbis-socius/cmd/api/datastore"
 	"github.com/ecumenos/orbis-socius/cmd/api/httpserver"
-	"github.com/ecumenos/orbis-socius/cmd/api/repo"
 	"github.com/ecumenos/orbis-socius/internal/postgres"
 	"github.com/ecumenos/orbis-socius/pkg/ecumenosfx"
 	"github.com/ecumenos/orbis-socius/pkg/logger"
@@ -69,7 +69,7 @@ var runAppCmd = &cli.Command{
 			configuration.Module,
 			httpserver.Module,
 			accounts.Module,
-			repo.Module,
+			datastore.Module,
 		)
 
 		return zerodowntime.HandleApp(app)

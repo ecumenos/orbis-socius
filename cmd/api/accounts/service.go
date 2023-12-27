@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/snowflake"
-	"github.com/ecumenos/orbis-socius/cmd/api/repo"
+	"github.com/ecumenos/orbis-socius/cmd/api/datastore"
 	"github.com/ecumenos/orbis-socius/models"
 	"github.com/ecumenos/orbis-socius/pkg/toolkit/errorsutils"
 	"github.com/jackc/pgx/v4"
@@ -19,20 +19,16 @@ var Module = fx.Options(
 )
 
 type Service struct {
-	db repo.Driver
+	db datastore.Driver
 }
 
-func NewService(db repo.Driver) *Service {
+func NewService(db datastore.Driver) *Service {
 	return &Service{db: db}
 }
 
 func (s *Service) createAccount(ctx context.Context, uniqueName, domain, displayName string, civitas int64) (*models.Account, error) {
-	a, err := s.getAccountByUniqueName(ctx, uniqueName)
-	if err != nil {
-		return nil, fmt.Errorf("issues with getting account by unique name (%v), err = %w", uniqueName, err)
-	}
-	if a != nil {
-		return nil, fmt.Errorf("account with the unique name exists (unique name = %v)", uniqueName)
+	if err := s.checkUniqueName(ctx, uniqueName); err != nil {
+		return nil, err
 	}
 
 	id, err := s.getSnowflakeID(ctx, civitas)
@@ -78,6 +74,22 @@ func (s *Service) getSnowflakeID(ctx context.Context, civitas int64) (int64, err
 	}
 
 	return 0, errors.New("can not generate unique id for 10 times of try")
+}
+
+func (s *Service) checkUniqueName(ctx context.Context, uniqueName string) error {
+	if !models.ValidateAccountUniqueName(uniqueName) {
+		return fmt.Errorf("invalid unique name = %v", uniqueName)
+	}
+
+	a, err := s.getAccountByUniqueName(ctx, uniqueName)
+	if err != nil {
+		return fmt.Errorf("issues with getting account by unique name (%v), err = %w", uniqueName, err)
+	}
+	if a != nil {
+		return fmt.Errorf("account with the unique name exists (unique name = %v)", uniqueName)
+	}
+
+	return nil
 }
 
 func (s *Service) getAccountByID(ctx context.Context, id int64) (*models.Account, error) {
