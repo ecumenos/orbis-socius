@@ -6,7 +6,6 @@ require (
 	github.com/carlmjohnson/versioninfo v0.22.5
 	github.com/ecumenos/fxecumenos v0.0.7
 	github.com/ecumenos/go-toolkit v0.0.3
-	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/gorilla/mux v1.8.1
 	github.com/jackc/pgx/v4 v4.18.1
 	github.com/jinzhu/configor v1.2.2
@@ -24,6 +23,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang-migrate/migrate/v4 v4.17.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect

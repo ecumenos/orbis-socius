@@ -10,12 +10,12 @@ import (
 	"github.com/ecumenos/fxecumenos"
 	"github.com/ecumenos/fxecumenos/fxlogger"
 	"github.com/ecumenos/fxecumenos/fxpostgres"
+	"github.com/ecumenos/fxecumenos/fxpostgres/migrations"
 	"github.com/ecumenos/fxecumenos/fxrf"
 	"github.com/ecumenos/fxecumenos/zerodowntime"
 	"github.com/ecumenos/orbis-socius/cmd/api/accounts"
 	"github.com/ecumenos/orbis-socius/cmd/api/configuration"
 	"github.com/ecumenos/orbis-socius/cmd/api/httpserver"
-	"github.com/ecumenos/orbis-socius/internal/postgres"
 	cli "github.com/urfave/cli/v2"
 	"golang.org/x/exp/slog"
 )
@@ -83,7 +83,7 @@ var migrateUpCmd = &cli.Command{
 			fxlogger.Module,
 			configuration.Module,
 			fx.Invoke(func(cfg *configuration.Config, logger *zap.Logger, shutdowner fx.Shutdowner) error {
-				fn := postgres.NewMigrateUpFunc()
+				fn := migrations.NewMigrateUpFunc()
 				if !cctx.Bool("prod") {
 					logger.Info("runnning migrate up",
 						zap.String("db_url", cfg.APIDataStore.URL),
@@ -108,7 +108,7 @@ var migrateDownCmd = &cli.Command{
 			fxlogger.Module,
 			configuration.Module,
 			fx.Invoke(func(cfg *configuration.Config, logger *zap.Logger, shutdowner fx.Shutdowner) error {
-				fn := postgres.NewMigrateDownFunc()
+				fn := migrations.NewMigrateDownFunc()
 				if !cctx.Bool("prod") {
 					logger.Info("runnning migrate down",
 						zap.String("db_url", cfg.APIDataStore.URL),
