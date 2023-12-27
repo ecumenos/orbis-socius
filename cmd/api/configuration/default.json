@@ -1,5 +1,4 @@
 {
-  "apiProd": false,
   "apiLocal": true,
   "apiHTTP": {
     "addr": ":9090",
@@ -10,6 +9,12 @@
   },
   "apiDataStore": {
     "url": "postgresql://ecumenosuser:rootpassword@localhost:5432/ecumenos_orbis_socius_apidb",
-    "migrationsPath": "file://cmd/api/repo/migrations"
+    "migrationsPath": "file://cmd/api/migrations"
+  },
+  "apiLogger": {
+    "prod": false
+  },
+  "apiResponseFactory": {
+    "writeLogs": true
   }
 }

@@ -3,12 +3,20 @@ package httpserver
 import (
 	"context"
 	"net/http"
+	"time"
 
-	"github.com/ecumenos/orbis-socius/cmd/api/configuration"
 	"github.com/gorilla/mux"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
+
+type Config struct {
+	Addr           string        `default:":9090"`
+	HandlerTimeout time.Duration `default:"30s"`
+	ReadTimeout    time.Duration `default:"15s"`
+	WriteTimeout   time.Duration `default:"15s"`
+	IdleTimeout    time.Duration `default:"15s"`
+}
 
 var Module = fx.Options(
 	fx.Provide(NewHandlers, NewRouter, NewServer),
@@ -32,14 +40,14 @@ type Server struct {
 	logger *zap.Logger
 }
 
-func NewServer(cfg *configuration.Config, logger *zap.Logger, router *mux.Router) *Server {
+func NewServer(cfg *Config, logger *zap.Logger, router *mux.Router) *Server {
 	return &Server{
 		server: &http.Server{
-			Addr:         cfg.APIHTTP.Addr,
-			WriteTimeout: cfg.APIHTTP.WriteTimeout,
-			ReadTimeout:  cfg.APIHTTP.ReadTimeout,
-			IdleTimeout:  cfg.APIHTTP.IdleTimeout,
-			Handler:      http.TimeoutHandler(router, cfg.APIHTTP.HandlerTimeout, "something went wrong"),
+			Addr:         cfg.Addr,
+			WriteTimeout: cfg.WriteTimeout,
+			ReadTimeout:  cfg.ReadTimeout,
+			IdleTimeout:  cfg.IdleTimeout,
+			Handler:      http.TimeoutHandler(router, cfg.HandlerTimeout, "something went wrong"),
 		},
 		logger: logger,
 	}

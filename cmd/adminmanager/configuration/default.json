@@ -1,5 +1,4 @@
 {
-  "adminManagerProd": false,
   "adminManagerLocal": true,
   "adminManagerHTTP": {
     "addr": ":9091",
@@ -7,5 +6,11 @@
     "readTimeout": 15000000000,
     "writeTimeout": 15000000000,
     "idleTimeout": 15000000000
+  },
+  "adminManagerLogger": {
+    "prod": false
+  },
+  "adminManagerResponseFactory": {
+    "writeLogs": true
   }
 }

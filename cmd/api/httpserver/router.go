@@ -3,6 +3,7 @@ package httpserver
 import (
 	"net/http"
 
+	"github.com/ecumenos/fxecumenos/fxrf"
 	"github.com/gorilla/mux"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -11,15 +12,16 @@ import (
 type routesParams struct {
 	fx.In
 
-	Handlers Handlers
-	Logger   *zap.Logger
+	Handlers        Handlers
+	Logger          *zap.Logger
+	ResponseFactory fxrf.Factory
 }
 
 func NewRouter(params routesParams) *mux.Router {
 	router := mux.NewRouter()
-	enrichContext := NewEnrichContextMiddleware(params.Logger)
-	logRequest := NewLoggerMiddleware(params.Logger)
-	recovery := NewRecoverMiddleware(params.Logger)
+	enrichContext := NewEnrichContextMiddleware(params.Logger, params.ResponseFactory)
+	logRequest := NewLoggerMiddleware(params.Logger, params.ResponseFactory)
+	recovery := NewRecoverMiddleware(params.Logger, params.ResponseFactory)
 
 	router.Use(mux.MiddlewareFunc(enrichContext))
 	router.HandleFunc("/ping", params.Handlers.Ping).Methods(http.MethodGet)

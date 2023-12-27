@@ -3,9 +3,9 @@ package httpserver
 import (
 	"net/http"
 
+	"github.com/ecumenos/fxecumenos"
+	"github.com/ecumenos/fxecumenos/fxrf"
 	"github.com/ecumenos/orbis-socius/cmd/api/accounts"
-	"github.com/ecumenos/orbis-socius/pkg/ecumenosfx"
-	"github.com/ecumenos/orbis-socius/pkg/toolkit/httputils"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -18,24 +18,27 @@ type Handlers interface {
 }
 
 type HandlersImpl struct {
-	Logger   *zap.Logger
-	Name     ecumenosfx.ServiceName
-	Accounts *accounts.Service
+	Logger          *zap.Logger
+	Name            fxecumenos.ServiceName
+	Accounts        *accounts.Service
+	ResponseFactory fxrf.Factory
 }
 
 type handlersParams struct {
 	fx.In
 
-	Logger   *zap.Logger
-	Name     ecumenosfx.ServiceName
-	Accounts *accounts.Service
+	Logger          *zap.Logger
+	Name            fxecumenos.ServiceName
+	Accounts        *accounts.Service
+	ResponseFactory fxrf.Factory
 }
 
 func NewHandlers(params handlersParams) Handlers {
 	return &HandlersImpl{
-		Logger:   params.Logger,
-		Name:     params.Name,
-		Accounts: params.Accounts,
+		Logger:          params.Logger,
+		Name:            params.Name,
+		Accounts:        params.Accounts,
+		ResponseFactory: params.ResponseFactory,
 	}
 }
 
@@ -45,7 +48,7 @@ type GetPingRespData struct {
 
 func (h *HandlersImpl) Ping(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	writer := httputils.NewWriter(h.Logger, rw)
+	writer := h.ResponseFactory.NewWriter(rw)
 	writer.WriteSuccess(ctx, &GetPingRespData{Ok: true})
 }
 
@@ -55,7 +58,7 @@ type GetInfoRespData struct {
 
 func (h *HandlersImpl) Info(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	writer := httputils.NewWriter(h.Logger, rw)
+	writer := h.ResponseFactory.NewWriter(rw)
 	writer.WriteSuccess(ctx, &GetInfoRespData{
 		Name: string(h.Name),
 	})

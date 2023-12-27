@@ -4,21 +4,23 @@ import (
 	"os"
 
 	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 
 	"github.com/carlmjohnson/versioninfo"
+	"github.com/ecumenos/fxecumenos"
+	"github.com/ecumenos/fxecumenos/fxlogger"
+	"github.com/ecumenos/fxecumenos/fxpostgres"
+	"github.com/ecumenos/fxecumenos/fxrf"
+	"github.com/ecumenos/fxecumenos/zerodowntime"
 	"github.com/ecumenos/orbis-socius/cmd/api/accounts"
 	"github.com/ecumenos/orbis-socius/cmd/api/configuration"
-	"github.com/ecumenos/orbis-socius/cmd/api/datastore"
 	"github.com/ecumenos/orbis-socius/cmd/api/httpserver"
 	"github.com/ecumenos/orbis-socius/internal/postgres"
-	"github.com/ecumenos/orbis-socius/pkg/ecumenosfx"
-	"github.com/ecumenos/orbis-socius/pkg/logger"
-	"github.com/ecumenos/orbis-socius/pkg/zerodowntime"
 	cli "github.com/urfave/cli/v2"
 	"golang.org/x/exp/slog"
 )
+
+var Version = fxecumenos.NewVersion("0.0.1")
 
 func main() {
 	if err := run(os.Args); err != nil {
@@ -56,20 +58,14 @@ var runAppCmd = &cli.Command{
 	Flags: []cli.Flag{},
 	Action: func(cctx *cli.Context) error {
 		app := fx.New(
-			fx.Supply(ecumenosfx.ServiceName("api")),
-			fx.Provide(
-				func(lc fx.Lifecycle, sn ecumenosfx.ServiceName) (*zap.Logger, error) {
-					return logger.NewZapLogger(sn, cctx.Bool("prod"), lc)
-				},
-				logger.ZapSugared,
-			),
-			fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
-				return &fxevent.ZapLogger{Logger: logger}
-			}),
+			fx.Supply(fxecumenos.ServiceName("api")),
+			fx.Supply(fxecumenos.Version(Version)),
+			fxlogger.Module,
+			fxrf.Module,
+			fxpostgres.Module,
 			configuration.Module,
 			httpserver.Module,
 			accounts.Module,
-			datastore.Module,
 		)
 
 		return zerodowntime.HandleApp(app)
@@ -82,16 +78,9 @@ var migrateUpCmd = &cli.Command{
 	Flags: []cli.Flag{},
 	Action: func(cctx *cli.Context) error {
 		app := fx.New(
-			fx.Supply(ecumenosfx.ServiceName("api")),
-			fx.Provide(
-				func(lc fx.Lifecycle, sn ecumenosfx.ServiceName) (*zap.Logger, error) {
-					return logger.NewZapLogger(sn, cctx.Bool("prod"), lc)
-				},
-				logger.ZapSugared,
-			),
-			fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
-				return &fxevent.ZapLogger{Logger: logger}
-			}),
+			fx.Supply(fxecumenos.ServiceName("api")),
+			fx.Supply(fxecumenos.Version(Version)),
+			fxlogger.Module,
 			configuration.Module,
 			fx.Invoke(func(cfg *configuration.Config, logger *zap.Logger, shutdowner fx.Shutdowner) error {
 				fn := postgres.NewMigrateUpFunc()
@@ -114,16 +103,9 @@ var migrateDownCmd = &cli.Command{
 	Flags: []cli.Flag{},
 	Action: func(cctx *cli.Context) error {
 		app := fx.New(
-			fx.Supply(ecumenosfx.ServiceName("api")),
-			fx.Provide(
-				func(lc fx.Lifecycle, sn ecumenosfx.ServiceName) (*zap.Logger, error) {
-					return logger.NewZapLogger(sn, cctx.Bool("prod"), lc)
-				},
-				logger.ZapSugared,
-			),
-			fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
-				return &fxevent.ZapLogger{Logger: logger}
-			}),
+			fx.Supply(fxecumenos.ServiceName("api")),
+			fx.Supply(fxecumenos.Version(Version)),
+			fxlogger.Module,
 			configuration.Module,
 			fx.Invoke(func(cfg *configuration.Config, logger *zap.Logger, shutdowner fx.Shutdowner) error {
 				fn := postgres.NewMigrateDownFunc()

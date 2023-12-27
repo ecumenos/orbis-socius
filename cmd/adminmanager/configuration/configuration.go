@@ -1,17 +1,14 @@
 package configuration
 
-import "time"
+import (
+	"github.com/ecumenos/fxecumenos/fxlogger"
+	"github.com/ecumenos/fxecumenos/fxrf"
+	"github.com/ecumenos/orbis-socius/cmd/adminmanager/httpserver"
+)
 
 type Config struct {
-	AdminManagerProd  bool
-	AdminManagerLocal bool `default:"true"`
-	AdminManagerHTTP  HTTPConfig
-}
-
-type HTTPConfig struct {
-	Addr           string        `default:":9091"`
-	HandlerTimeout time.Duration `default:"30s"`
-	ReadTimeout    time.Duration `default:"15s"`
-	WriteTimeout   time.Duration `default:"15s"`
-	IdleTimeout    time.Duration `default:"15s"`
+	AdminManagerLocal           bool `default:"true"`
+	AdminManagerHTTP            *httpserver.Config
+	AdminManagerLogger          *fxlogger.Config
+	AdminManagerResponseFactory *fxrf.Config
 }

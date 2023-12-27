@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bwmarrin/snowflake"
-	"github.com/ecumenos/orbis-socius/cmd/api/datastore"
+	"github.com/ecumenos/fxecumenos/fxpostgres"
+	"github.com/ecumenos/go-toolkit/errorsutils"
+	"github.com/ecumenos/go-toolkit/random"
 	"github.com/ecumenos/orbis-socius/models"
-	"github.com/ecumenos/orbis-socius/pkg/toolkit/errorsutils"
 	"github.com/jackc/pgx/v4"
 	"go.uber.org/fx"
 )
@@ -19,10 +19,10 @@ var Module = fx.Options(
 )
 
 type Service struct {
-	db datastore.Driver
+	db fxpostgres.Driver
 }
 
-func NewService(db datastore.Driver) *Service {
+func NewService(db fxpostgres.Driver) *Service {
 	return &Service{db: db}
 }
 
@@ -59,13 +59,13 @@ func (s *Service) createAccount(ctx context.Context, uniqueName, domain, display
 }
 
 func (s *Service) getSnowflakeID(ctx context.Context, civitas int64) (int64, error) {
-	node, err := snowflake.NewNode(civitas)
+	node, err := random.NewSnowflakeNode(civitas)
 	if err != nil {
 		return 0, fmt.Errorf("node creation err = %w", err)
 	}
 
 	for i := 0; i < 10; i++ {
-		id := node.Generate().Int64()
+		id := node.GenerateInt64()
 		a, err := s.getAccountByID(ctx, id)
 		if err != nil || a != nil {
 			continue
